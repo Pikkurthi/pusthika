@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "style": "src/index.css",
+   "scripts": {
+    "lint": "eslint src --ext .ts,.tsx"
+    },
   "exports": {
     ".": {
       "style": "./src/index.css"
@@ -12,5 +15,8 @@
     "daisyui": "^5.0.35"
     },
   "dependencies": {
+        "tailwindcss": "^3.4.1",
+    "postcss": "^8.5.3"
+
   }
 }
