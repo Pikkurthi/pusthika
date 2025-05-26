@@ -1,0 +1,16 @@
+/* 1) Tell the CLI where the JS config is */
+@config "../tailwind.config.js";
+
+/* 2) Inject Tailwind’s layers */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 3) Your design tokens */
+@theme {
+  --color-primary:    #1976D2;
+  --color-secondary:  #9C27B0;
+  --color-background: #FAFAFA;
+  --color-text:       #212121;
+  --font-sans:        'Inter, sans-serif';
+}

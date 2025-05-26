@@ -1,0 +1,16 @@
+{
+  "name": "@pustika/design-system",
+  "version": "0.1.0",
+  "private": true,
+  "style": "src/index.css",
+  "exports": {
+    ".": {
+      "style": "./src/index.css"
+    }
+  },
+  "peerDependencies": {
+    "daisyui": "^5.0.35"
+    },
+  "dependencies": {
+  }
+}

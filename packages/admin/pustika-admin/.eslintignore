@@ -1,0 +1,12 @@
+node_modules
+dist
+build
+.cache
+
+
+# ignore all test files
+**/*.test.ts
+**/*.spec.ts
+
+# ignore tiptap extensions if needed
+src/editor-plugins/**
