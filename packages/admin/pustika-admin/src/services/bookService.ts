@@ -68,6 +68,10 @@ export async function deletePageAdmin(bookId: number, pageNumber: number) {
   return axios.delete(ENDPOINTS.DELETE_PAGE(bookId, pageNumber));
 }
 
+export async function generateAudio(bookId: number, pageNumber: number): Promise<{ audioUrl: string, marksUrl: string }> {
+  const res = await axios.post(ENDPOINTS.POST_GENERATE_AUDIO, { bookId, pageNumber });
+  return res.data;
+}
 // ──────────────────────────────────────────────────────────────────────────────
 // Dashboard metrics:
 

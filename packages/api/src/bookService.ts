@@ -65,6 +65,11 @@ export async function saveReadingProgress(userId: string | null, bookId: number,
 }
 
 
+export async function generateAudio(bookId: number, pageNumber: number): Promise<{ audioUrl: string, marksUrl: string }> {
+  const res = await axios.post(`${API_BASE_URL}/api/tts/generate`, { bookId, pageNumber });
+  return res.data;
+}
+
 export async function isBookWishlisted(userId: number, bookId: number): Promise<boolean> {
   try {
     const res = await axios.get(`${API_BASE_URL}/users/${userId}/wishlist/check/${bookId}`);

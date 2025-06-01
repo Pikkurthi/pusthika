@@ -6,6 +6,8 @@ export const ENDPOINTS = {
   GET_BOOKS:     `${API_BASE}/books`,
   UPLOAD_FILE: `${API_BASE}/admin/files/upload`,
   CREATE_BOOK:   `${API_BASE}/admin/books`,
+  POST_GENERATE_AUDIO:  `${API_BASE}/api/tts/generate`,
+
   UPDATE_BOOK:   (id: number) => `${API_BASE}/admin/books/${id}`,
 
   // new page‐management endpoints:

@@ -5,6 +5,7 @@ import {
   addPageAdmin,
   updatePageAdmin,
   deletePageAdmin,
+  generateAudio,
 } from '../services/bookService';
 import type { BookPageDto, CreateOrUpdatePageDto } from '../types';
 import RichTextEditor from '../components/RichTextEditor';
@@ -20,8 +21,8 @@ const EditPages: React.FC = () => {
     content: '',
   });
   const [loading, setLoading] = useState(false);
+  const [generatingPage, setGeneratingPage] = useState<number | null>(null);
 
-  // Load pages on mount / bookId change
   useEffect(() => {
     if (!bookId) return;
     fetchPages();
@@ -37,6 +38,20 @@ const EditPages: React.FC = () => {
     }
   };
 
+  const handleGenerateAudio = async (pageNumber: number) => {
+    if (!bookId) return;
+    setGeneratingPage(pageNumber);
+    try {
+      await generateAudio(bookId, pageNumber);
+      await fetchPages();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to generate audio');
+    } finally {
+      setGeneratingPage(null);
+    }
+  };
+
   const handleSave = async () => {
     setLoading(true);
     try {
@@ -49,11 +64,7 @@ const EditPages: React.FC = () => {
         setEditing(null);
       } else {
         await addPageAdmin(bookId, dto);
-        // Prepare next page number
-        setNewPage({
-          pageNumber: newPage.pageNumber + 1,
-          content: '',
-        });
+        setNewPage({ pageNumber: newPage.pageNumber + 1, content: '' });
       }
 
       await fetchPages();
@@ -82,72 +93,75 @@ const EditPages: React.FC = () => {
         Manage Pages for Book #{bookId}
       </h2>
 
-      {/* Pages List */}
       <ul className="space-y-4 mb-8">
         {pages.map((page) => (
           <li key={page.pageNumber} className="border rounded-lg bg-base-100 shadow-sm">
             <div className="flex justify-between items-center p-4 border-b">
               <span className="font-semibold">Page {page.pageNumber}</span>
               <div className="space-x-2">
-                <button
-                  className="btn btn-xs btn-outline"
-                  onClick={() => setEditing(page)}
-                >
+                <button className="btn btn-xs btn-outline" onClick={() => setEditing(page)}>
                   Edit
                 </button>
-                <button
-                  className="btn btn-xs btn-error"
-                  onClick={() => handleDelete(page.pageNumber)}
-                >
+                <button className="btn btn-xs btn-error" onClick={() => handleDelete(page.pageNumber)}>
                   Delete
+                </button>
+                <button
+                  className={`btn btn-xs ${generatingPage === page.pageNumber ? 'loading' : 'btn-accent'}`}
+                  onClick={() => handleGenerateAudio(page.pageNumber)}
+                  disabled={generatingPage === page.pageNumber}
+                >
+                  🎙️ {generatingPage === page.pageNumber ? 'Generating...' : 'Generate Audio'}
                 </button>
               </div>
             </div>
             <div className="p-4 prose max-w-none">
-              <div
-                dangerouslySetInnerHTML={{ __html: page.content }}
-              />
+              <div dangerouslySetInnerHTML={{ __html: page.content }} />
+              {page.audioUrl && (
+                <div className="mt-4">
+                  <audio controls src={page.audioUrl} className="w-full" />
+                </div>
+              )}
+              {page.speechMarksUrl && (
+                <div className="mt-2 text-sm text-gray-500">
+                  <a
+                    href={page.speechMarksUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="underline"
+                  >
+                    View Speech Marks JSON
+                  </a>
+                </div>
+              )}
             </div>
           </li>
         ))}
       </ul>
 
-      {/* Add / Edit Form */}
       <div className="bg-base-100 p-6 rounded-lg shadow">
         <h3 className="text-xl font-semibold mb-4">
           {editing ? `Edit Page ${editing.pageNumber}` : 'Add New Page'}
         </h3>
 
-        {/* Page Number Input (only when adding) */}
         {!editing && (
           <input
             type="number"
             className="input input-bordered w-24 mb-4"
             value={newPage.pageNumber}
-            onChange={(e) =>
-              setNewPage({
-                ...newPage,
-                pageNumber: Number(e.target.value) || 1,
-              })
-            }
+            onChange={(e) => setNewPage({ ...newPage, pageNumber: Number(e.target.value) || 1 })}
             placeholder="Page #"
             min={1}
           />
         )}
 
-        {/* Rich Text Editor */}
         <RichTextEditor
           content={editing ? editing.content : newPage.content}
           onChange={(html) => {
-            if (editing) {
-              setEditing({ ...editing, content: html });
-            } else {
-              setNewPage({ ...newPage, content: html });
-            }
+            if (editing) setEditing({ ...editing, content: html });
+            else setNewPage({ ...newPage, content: html });
           }}
         />
 
-        {/* Action Buttons */}
         <div className="mt-4 flex items-center">
           <button
             className={`btn btn-primary ${loading ? 'loading' : ''}`}
@@ -157,10 +171,7 @@ const EditPages: React.FC = () => {
             {editing ? 'Save Changes' : 'Add Page'}
           </button>
           {editing && (
-            <button
-              className="btn btn-ghost ml-4"
-              onClick={() => setEditing(null)}
-            >
+            <button className="btn btn-ghost ml-4" onClick={() => setEditing(null)}>
               Cancel
             </button>
           )}

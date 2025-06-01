@@ -28,6 +28,8 @@ export interface BookPageDto {
   id: number;
   pageNumber: number;
   content: string;
+  audioUrl: string;
+  speechMarksUrl: string;
 }
 
 export interface CreateOrUpdatePageDto {

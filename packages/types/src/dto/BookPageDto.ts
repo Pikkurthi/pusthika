@@ -4,4 +4,7 @@ export interface BookPageDto {
   pageNumber: number;
   content: string;
   totalPages?: number; // optional if you return this from the API for convenience
+  audioUrl: string;
+  speechMarksUrl: string;
+  ttsContent: string;
 }

@@ -1,6 +1,6 @@
-// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx,html}'],
   theme: {
     extend: {
       colors: {
@@ -14,14 +14,7 @@ module.exports = {
       },
     },
   },
-  presets: [],
-  content: [
-    './index.html',
-    './src/**/*.{js,ts,jsx,tsx,html}'
-  ],
-  plugins: [
-    require('daisyui'),
-  ],
+  plugins: [require('daisyui')],
   daisyui: {
     themes: ['light', 'dark'],
   },
